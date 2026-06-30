@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>청년인턴 빙고! — 자주 묻는 질문</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --leaf:#16a34a;        /* 깊은 잎새 그린 (주색) */
+    --leaf-dark:#15803d;
+    --sprout:#22c55e;      /* 새싹 그린 */
+    --lime:#84cc16;        /* 라임 포인트 */
+    --ink:#052e16;         /* 진한 그린 잉크 (제목) */
+    --mint:#f0fdf4;        /* 민트 배경 */
+  }
+  *{ -webkit-tap-highlight-color:transparent; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; color:#334155; }
+  section[id], #home{ scroll-margin-top:76px; }
+
+  .ic{ width:1em; height:1em; display:inline-block; vertical-align:-0.125em; flex-shrink:0; }
+  .nav-btn{ background:none; border:none; cursor:pointer; font:inherit; }
+
+  /* 히어로 배경 */
+  .leaf-mesh{
+    background:
+      radial-gradient(55% 60% at 85% 10%, rgba(132,204,22,.18) 0%, transparent 60%),
+      radial-gradient(60% 65% at 8% 90%, rgba(34,197,94,.16) 0%, transparent 60%),
+      linear-gradient(180deg,#ffffff 0%, var(--mint) 100%);
+  }
+
+  /* ===== 아코디언 ===== */
+  .faq-item{ border:1px solid #e2e8f0; border-radius:16px; background:#fff; overflow:hidden; transition:border-color .15s ease, box-shadow .15s ease; }
+  .faq-item.open{ border-color:var(--sprout); box-shadow:0 8px 22px -14px rgba(22,163,74,.35); }
+  .faq-q{ width:100%; text-align:left; background:none; border:none; cursor:pointer; font:inherit;
+    display:flex; align-items:center; gap:11px; padding:13px 17px; color:var(--ink); font-weight:700; font-size:.95rem; }
+  .faq-q .chev{ margin-left:auto; color:#94a3b8; transition:transform .25s ease; flex-shrink:0; }
+  .faq-item.open .faq-q .chev{ transform:rotate(180deg); color:var(--leaf); }
+  .faq-a{ padding:0 17px; max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s ease; color:#475569; line-height:1.65; font-size:.9rem; }
+  .faq-item.open .faq-a{ padding:0 17px 15px 17px; max-height:600px; }
+  .faq-num{ width:24px; height:24px; border-radius:7px; background:var(--mint); color:var(--leaf);
+    font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  .chip{ cursor:pointer; border:1.5px solid #e2e8f0; background:#fff; color:#475569; font-weight:600;
+    font-size:.82rem; padding:7px 15px; border-radius:999px; transition:all .15s ease; white-space:nowrap; }
+  .chip:hover{ border-color:var(--sprout); color:var(--leaf-dark); }
+  .chip.active{ background:var(--leaf); border-color:var(--leaf); color:#fff; }
+
+  /* 카테고리 그룹 */
+  .cat-group{ border:1px solid #e2e8f0; border-radius:18px; overflow:hidden; background:#fff; transition:border-color .15s ease, box-shadow .15s ease; }
+  .cat-group:hover{ border-color:#bbf7d0; }
+  .cat-group.open{ border-color:var(--sprout); box-shadow:0 10px 26px -16px rgba(22,163,74,.4); }
+  .cat-head{ width:100%; display:flex; align-items:center; gap:12px; padding:15px 18px; background:none; border:none; cursor:pointer; font:inherit; color:var(--ink); font-weight:800; font-size:1.02rem; }
+  .cat-ic{ width:38px; height:38px; border-radius:12px; background:var(--mint); color:var(--leaf); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .cat-chev{ margin-left:auto; color:#94a3b8; transition:transform .25s ease; flex-shrink:0; }
+  .cat-group.open .cat-head{ background:#f6fdf9; }
+  .cat-group.open .cat-ic{ background:var(--leaf); color:#fff; }
+  .cat-group.open .cat-chev{ transform:rotate(180deg); color:var(--leaf); }
+  .cat-body{ display:none; padding:8px; }
+  .cat-group.open .cat-body{ display:block; animation:groupIn .26s ease; }
+  @keyframes groupIn{ from{ opacity:0; transform:translateY(-6px) } to{ opacity:1; transform:none } }
+  .cat-body .faq-item{ border:1px solid #eef2f7; border-radius:12px; }
+  .cat-body .faq-item.open{ border-color:var(--sprout); }
+  .cat-body .faq-item + .faq-item{ margin-top:6px; }
+  /* 모두 펼치기/접기 */
+  .expand-all{ background:none; border:none; cursor:pointer; font:inherit; color:var(--leaf-dark); font-weight:700; font-size:.85rem; display:inline-flex; align-items:center; gap:5px; padding:4px 2px; }
+  .expand-all:hover{ color:var(--leaf); }
+
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1!important; transform:none!important; transition:none!important; }
+    .cat-group.open .cat-body{ animation:none!important; }
+  }
+</style>
+</head>
+<body class="bg-white">
+
+<!-- ===== 아이콘 정의 (인라인 내장) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 20h10"/><path d="M12 20c0-7 0-9 0-12"/><path d="M12 8C12 5 9.5 3 6 3 6 6.5 8 9 12 9"/><path d="M12 11c0-3 2.5-5 6-5 0 3.5-2 6-6 6"/>
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+  </symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 9.5 9.5 0 0 1-4-.9L3 21l1.9-5.5a8.38 8.38 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"/>
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>
+  </symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+  </symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3.2A1.2 1.2 0 0 1 10.2 2h3.6A1.2 1.2 0 0 1 15 3.2V4"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/>
+  </symbol>
+  <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.2 21 7v10l-5-3.2Z"/>
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>
+  </symbol>
+</svg>
+
+<!-- ===== HEADER ===== -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-green-100">
+  <div class="max-w-5xl mx-auto px-5 h-[60px] flex items-center justify-between">
+    <button onclick="scrollToId('home')" class="nav-btn flex items-center gap-2">
+      <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white" style="background:linear-gradient(135deg,var(--sprout),var(--lime))">
+        <svg class="ic w-4 h-4"><use href="#i-sprout"/></svg>
+      </span>
+      <span class="font-black text-[17px]" style="color:var(--ink)">청년인턴 빙고!</span>
+    </button>
+    <nav class="flex items-center gap-2">
+      <button onclick="scrollToId('faq')" class="nav-btn text-sm font-semibold text-slate-600 hover:text-green-700 px-3 py-2">자주 묻는 질문</button>
+      <button onclick="scrollToId('contact')" class="text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors" style="background:var(--leaf)" onmouseover="this.style.background='var(--leaf-dark)'" onmouseout="this.style.background='var(--leaf)'">문의하기</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== HERO ===== -->
+  <section id="home" class="leaf-mesh">
+    <div class="max-w-2xl mx-auto px-5 pt-16 pb-16 lg:pt-24 lg:pb-20 text-center">
+      <span class="reveal inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full" style="background:#dcfce7;color:var(--leaf-dark)">
+        <svg class="ic w-3.5 h-3.5"><use href="#i-grid"/></svg> 청년인턴 팀 빙고 챌린지
+      </span>
+      <h1 class="reveal mt-5 text-4xl lg:text-5xl font-black leading-[1.15] tracking-tight" style="color:var(--ink)">
+        무엇이든 물어보세요
+      </h1>
+      <p class="reveal mt-4 text-lg text-slate-600 leading-relaxed">
+        '청년인턴 빙고!'에 대해 자주 묻는 질문을 모았어요.<br class="hidden sm:block">
+        아래에서 검색하거나 카테고리로 골라보세요.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="py-16 lg:py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-5">
+      <div class="reveal text-center mb-8">
+        <span class="text-xs font-bold tracking-widest uppercase" style="color:var(--leaf)">FAQ</span>
+        <h2 class="mt-2 text-3xl lg:text-4xl font-black" style="color:var(--ink)">자주 묻는 질문</h2>
+        <p class="mt-3 text-slate-500">키워드로 검색하거나 카테고리를 펼쳐보세요.</p>
+      </div>
+
+      <!-- 검색 -->
+      <div class="reveal relative max-w-lg mx-auto mb-6">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><svg class="ic w-5 h-5"><use href="#i-search"/></svg></span>
+        <input id="search" type="text" oninput="applyFilter()" placeholder="질문 검색 (예: 팀, 인증, 기간)"
+          class="w-full pl-11 pr-10 py-3.5 rounded-2xl border-2 border-green-100 bg-white text-sm focus:outline-none focus:border-green-400 transition-colors">
+        <button id="search-clear" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200">
+          <svg class="ic w-3 h-3"><use href="#i-x"/></svg>
+        </button>
+      </div>
+
+      <!-- 모두 펼치기/접기 -->
+      <div class="reveal flex justify-end mb-2.5">
+        <button class="expand-all" onclick="toggleAll()">
+          <svg class="ic w-4 h-4"><use href="#i-chevron-down"/></svg>
+          <span id="expand-all-label">모두 펼치기</span>
+        </button>
+      </div>
+
+      <!-- 카테고리 그룹 -->
+      <div id="faq-groups" class="reveal space-y-3"></div>
+
+      <!-- 결과 없음 -->
+      <div id="noresult" class="hidden text-center py-12">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-green-50 text-green-500 flex items-center justify-center mb-3">
+          <svg class="ic w-6 h-6"><use href="#i-search"/></svg>
+        </div>
+        <p class="text-slate-500">찾는 질문이 없어요. 검색어를 바꾸거나, 아래로 문의해 주세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 만족도 조사 ===== -->
+  <section id="survey" class="py-14 lg:py-16 bg-white">
+    <div class="max-w-3xl mx-auto px-5 reveal">
+      <div class="rounded-3xl border border-green-100 bg-green-50/60 p-7 lg:p-9 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white shrink-0" style="background:linear-gradient(135deg,var(--sprout),var(--lime))">
+          <svg class="ic w-7 h-7"><use href="#i-star"/></svg>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl lg:text-2xl font-black" style="color:var(--ink)">청년인턴 만족도 조사, 어디서 하냐고요?</h2>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">‘조사 참여하기’ 버튼을 눌러 바로 참여하세요!</p>
+        </div>
+        <a href="https://naver.me/FQuT8pQ5" target="_blank" rel="noopener"
+           class="shrink-0 inline-flex items-center gap-2 font-bold px-6 py-3.5 rounded-2xl text-white transition-transform hover:-translate-y-0.5" style="background:var(--leaf)">
+          <svg class="ic w-5 h-5"><use href="#i-clipboard"/></svg> 조사 참여하기
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="py-16 lg:py-20" style="background:var(--mint)">
+    <div class="max-w-2xl mx-auto px-5 text-center reveal">
+      <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-white mb-5" style="background:linear-gradient(135deg,var(--sprout),var(--lime))">
+        <svg class="ic w-6 h-6"><use href="#i-chat"/></svg>
+      </div>
+      <h2 class="text-2xl lg:text-3xl font-black" style="color:var(--ink)">찾는 답이 없나요?</h2>
+      <p class="mt-3 text-slate-600">운영진에게 직접 물어보세요. 카카오톡이나 이메일로 편하게 연락 주시면 됩니다.</p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <button onclick="showContact('kakao')" class="inline-flex items-center gap-2 font-bold px-6 py-3.5 rounded-2xl text-white transition-transform hover:-translate-y-0.5" style="background:var(--leaf)">
+          <svg class="ic w-5 h-5"><use href="#i-chat"/></svg> 카카오톡 문의
+        </button>
+        <button onclick="showContact('mail')" class="inline-flex items-center gap-2 font-bold px-6 py-3.5 rounded-2xl border-2 transition-transform hover:-translate-y-0.5" style="border-color:var(--leaf);color:var(--leaf-dark)">
+          <svg class="ic w-5 h-5"><use href="#i-mail"/></svg> 이메일 문의
+        </button>
+      </div>
+
+      <!-- 클릭 시 뜨는 안내문 -->
+      <div id="contact-msg" class="hidden mt-5 max-w-md mx-auto rounded-2xl bg-white border-2 px-5 py-4 text-left flex items-start gap-3" style="border-color:#bbf7d0">
+        <span id="contact-msg-ic" class="mt-0.5 text-green-600"></span>
+        <p id="contact-msg-text" class="text-sm text-slate-700 leading-relaxed"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-white border-t border-green-100 py-8 px-5">
+  <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-white" style="background:linear-gradient(135deg,var(--sprout),var(--lime))"><svg class="ic w-3 h-3"><use href="#i-sprout"/></svg></span>
+      <span class="font-bold text-slate-600">청년인턴 빙고!</span>
+    </div>
+    <div>© 2026 청년인턴 빙고! · 자주 묻는 질문</div>
+  </div>
+</footer>
+
+<script>
+  /* =====================================================================
+     ▼▼▼  여기만 고치면 됩니다  ▼▼▼
+     질문을 추가하려면 아래 목록에 { cat, q, a } 한 줄을 더 넣으세요.
+       - cat : 카테고리 이름 (같은 이름끼리 묶이고, 새 이름을 쓰면 칩이 자동 생성됨)
+       - q   : 질문
+       - a   : 답변
+     순서는 적은 순서대로 화면에 나옵니다.
+     ===================================================================== */
+  const faqs = [
+    { cat:'미션 안내', q:'정책 현장 개선 아이디어가 무엇인가요?',
+      a:'정책 현장 개선 아이디어란, 빙고판 미션 중 방문하게 되는 백년가게·전통시장·골목형 상점가 중 한 곳에 대한 개선 아이디어를 정해진 양식에 맞추어 최대 2페이지 이내로, hwpx 또는 pdf 형식 중 하나로 제출하는 활동입니다. 즉, 여러분이 직접 중기부의 주요 정책 현장에 대한 개선안을 제시하는 미션입니다.' },
+    { cat:'미션 안내', q:'백년가게는 어디서 찾을 수 있나요?',
+      a:'백년가게는 <a href="https://www.sbiz.or.kr/hdst/main/mainPage.do" target="_blank" rel="noopener" class="text-green-700 font-semibold underline">백년가게 사이트</a>에 접속한 뒤, [점포소개] → [전국의 백년가게] 메뉴를 누르면 지역별로 확인할 수 있습니다.' },
+    { cat:'미션 안내', q:'골목형 상점가는 어디서 찾아볼 수 있나요?',
+      a:'디지털온누리 앱 메인 화면의 [온누리 가맹점 찾기] → [현 지도 재검색]을 누르면 온누리 상품권을 사용할 수 있는 곳들이 표시됩니다. 각 장소를 눌러 ‘골목형 상점가’라는 명칭이 있는지 확인하세요. ‘○○ 상점가’라고만 쓰인 곳은 골목형 상점가가 아닙니다. <b>‘골목형 상점가’가 쓰인 곳만 골목형 상점가입니다.</b>' },
+    { cat:'미션 안내', q:'온누리 상품권은 어떻게 사용하나요?',
+      a:'온누리 상품권은 디지털온누리 앱을 다운로드한 뒤, 앱 내에서 금액을 충전하여 사용할 수 있습니다.' },
+    { cat:'미션 안내', q:'타 지방청 방문하기는 어떻게 하나요?',
+      a:'타 지방청 방문 미션은 해당 미션에 참여하는 팀의 팀장끼리 서로 연락해 방문 일자를 잡으면 됩니다. 한 팀(예: A팀)이 다른 팀(B팀)을 방문한다고 하면, 방문을 받은 B팀의 팀장이 찾아온 A팀에게 자신이 근무하는 청을 간략히 소개하고, 맡은 업무와 하는 일 등을 안내해 줍니다. 소개 이후 시간이 되면 함께 점심 식사를 해도 좋습니다. 점심 식사는 필수 사항이 아닌 선택 사항이니, 두 팀이 자유롭게 조정하여 진행하시면 됩니다.' },
+    { cat:'미션 안내', q:'팀별 네 컷 사진 찍기 미션은 한 컷에 팀원이 다 나와야 하나요?',
+      a:'아니요. 한 컷에 팀원 모두가 나오게 찍으실 필요는 없습니다. 단, 네 컷 중에 팀원이 한 번 이상은 나와야 합니다.' },
+    { cat:'미션 안내', q:'멘토 명함 인증샷 찍기에서 멘토는 어떤 멘토를 의미하나요?',
+      a:'청년인턴 멘토링 일지에 작성하시는 멘토분을 뜻합니다. 해당 멘토분의 명함을 들고 팀원 전원이 인증샷을 찍으시면 됩니다.' },
+    { cat:'참여·인증', q:'인증은 아무 시간에 하면 되나요?',
+      a:'인증은 평일 09:00~18:00 사이에, 각 팀 팀장이 팀장 톡방에 미션 인증샷을 올려주시면 됩니다. 단, 11:30~13:00는 점심시간이라 인증 확인이 어렵습니다. 또한 7. 14.~16.은 운영자의 개인 사정으로 인증 확인이 평소보다 늦을 수 있는 점 양해 부탁드립니다.' },
+    { cat:'참여·인증', q:'카페 가기, 점심 먹기, 빙수 먹기 등의 미션은 인증을 어떻게 하나요?',
+      a:'팀원 전원이 나오는 사진을 찍어 보내주시면 됩니다.' },
+    { cat:'참여·인증', q:'온누리 상품권 사용하기는 어떻게 인증하나요?',
+      a:'디지털온누리 앱에서 금액 충전 내역과 결제 내역을 캡처해 인증하시면 됩니다. 충전·결제 내역은 디지털온누리 앱 오른쪽 상단을 누른 뒤 [이용내역]에 들어가면 결제 내역과 충전 내역을 확인할 수 있습니다.' },
+    { cat:'참여·인증', q:'미션마다 참여해야 하는 인원이 다른가요?',
+      a:'네, 미션 종류에 따라 다릅니다.<br>· <b>전통시장 방문·백년가게 방문·릴스</b> 미션은 팀원 중 절반 이상이 참여하면 됩니다(예: 7명 팀은 4명 이상). 단, 2명인 팀은 2명 모두 참여해야 합니다.<br>· <b>온누리 상품권 사용, 인증샷 찍기, 팔로우하기, 맛집 소개, 점심 먹기, 팀별 네컷 사진 찍기, 멘토 명함 인증샷</b> 등의 미션은 팀원 전원이 참여해야 합니다.<br>· <b>정책 현장 개선 아이디어</b>는 인원과 관계없이 팀별로 1개를 제출하면 됩니다.' },
+    { cat:'참여·인증', q:'미션을 수행하면 그 이후엔 무엇을 하면 되나요?',
+      a:'운영자가 미션 수행을 확인한 뒤, 체크 표시와 함께 “확인했습니다” 톡을 남겨드립니다. 두 가지가 모두 확인되면, 각 팀별로 미션 확인이 완료된 칸을 개별적으로 이모지로 표시하면 됩니다. 그리고 남은 미션을 수행하시면 됩니다.' },
+    { cat:'참여·인증', q:'빙고판 한 줄을 완성할 때마다 톡방에 올려야 하나요?',
+      a:'네, 맞습니다. 빙고판 한 줄을 완성할 때마다 미션 인증 톡방에 올려주시면 됩니다.' },
+    { cat:'릴스', q:'릴스는 길이가 어느 정도 되어야 하나요?',
+      a:'릴스 길이는 최소 15초에서 최대 60초이면 됩니다.' },
+    { cat:'릴스', q:'릴스는 모든 팀원이 출연해야 하나요?',
+      a:'아니요. 모든 팀원이 영상에 출연할 필요는 없습니다. 일반 미션과 마찬가지로 팀원 중 절반 이상이 참여하면 되며, 촬영·편집 등도 참여로 인정됩니다. 단, 2명인 팀은 한 명 출연·한 명 촬영으로 진행해도 됩니다.' },
+    { cat:'릴스', q:'릴스 촬영은 인증을 어떻게 하나요?',
+      a:'릴스 촬영에 팀원 중 절반 이상이 참여하는 모습, 즉 누가 봐도 릴스 촬영 중인 현장을 찍은 인증샷과 릴스 제작본(완성 영상)을 팀장 톡방에 올려주시면 됩니다.' },
+    { cat:'릴스', q:'릴스 찍는 미션이 많은데, 해당 릴스들은 중기부 SNS에 업로드되나요?',
+      a:'원하시는 팀에 한해 업로드하는 방안을 고려 중입니다.' },
+    { cat:'일정', q:'프로그램 기간(7. 1. ~ 7. 24.) 중 조기 마감될 수도 있나요?',
+      a:'네. 7월 1일~7월 24일 기간 중 6팀이 12줄을 모두 채우면 미션은 조기 종료됩니다.' }
+  ];
+  /* ▲▲▲  여기까지  ▲▲▲ */
+
+  /* 카테고리 그룹 생성 */
+  const catIcons = { '미션 안내':'i-clipboard', '참여·인증':'i-check', '릴스':'i-video', '일정':'i-calendar' };
+  function renderGroups(){
+    const cats = Array.from(new Set(faqs.map(f => f.cat)));
+    document.getElementById('faq-groups').innerHTML = cats.map(cat => {
+      const items = faqs.filter(f => f.cat === cat);
+      const icon = catIcons[cat] || 'i-grid';
+      const inner = items.map(f => {
+        const text = (f.q + ' ' + f.a).toLowerCase().replace(/"/g,'');
+        return `<div class="faq-item" data-text="${text}">
+          <button class="faq-q" onclick="toggleItem(this)">
+            <span class="flex-1">${f.q}</span>
+            <svg class="ic w-5 h-5 chev"><use href="#i-chevron-down"/></svg>
+          </button>
+          <div class="faq-a">${f.a}</div>
+        </div>`;
+      }).join('');
+      return `<div class="cat-group" data-cat="${cat}">
+        <button class="cat-head" onclick="toggleGroup(this)">
+          <span class="cat-ic"><svg class="ic w-5 h-5"><use href="#${icon}"/></svg></span>
+          <span>${cat}</span>
+          <svg class="ic w-5 h-5 cat-chev"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="cat-body">${inner}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleGroup(btn){ btn.closest('.cat-group').classList.toggle('open'); updateExpandLabel(); }
+  function toggleItem(btn){ btn.closest('.faq-item').classList.toggle('open'); }
+
+  /* 모두 펼치기/접기 */
+  function toggleAll(){
+    const groups = [...document.querySelectorAll('.cat-group')].filter(g => g.style.display !== 'none');
+    const anyClosed = groups.some(g => !g.classList.contains('open'));
+    groups.forEach(g => g.classList.toggle('open', anyClosed));
+    updateExpandLabel();
+  }
+  function updateExpandLabel(){
+    const lbl = document.getElementById('expand-all-label');
+    if(!lbl) return;
+    const groups = [...document.querySelectorAll('.cat-group')].filter(g => g.style.display !== 'none');
+    const allOpen = groups.length > 0 && groups.every(g => g.classList.contains('open'));
+    lbl.textContent = allOpen ? '모두 접기' : '모두 펼치기';
+  }
+
+  function clearSearch(){
+    document.getElementById('search').value = '';
+    applyFilter();
+  }
+
+  /* 검색: 입력 시 매칭 질문만 보이도록 그룹을 펼치고 거름 */
+  function applyFilter(){
+    const q = (document.getElementById('search').value || '').trim().toLowerCase();
+    document.getElementById('search-clear').classList.toggle('hidden', q.length === 0);
+    let shown = 0;
+    document.querySelectorAll('.cat-group').forEach(group => {
+      let gShown = 0;
+      group.querySelectorAll('.faq-item').forEach(it => {
+        const ok = !q || it.dataset.text.includes(q);
+        it.style.display = ok ? '' : 'none';
+        if(!ok) it.classList.remove('open');
+        if(ok) gShown++;
+      });
+      group.style.display = gShown > 0 ? '' : 'none';
+      if(q){ group.classList.toggle('open', gShown > 0); }
+      else { group.classList.remove('open'); }
+      shown += gShown;
+    });
+    document.getElementById('noresult').classList.toggle('hidden', shown > 0);
+    updateExpandLabel();
+  }
+
+  /* 문의 버튼 클릭 시 안내문 표시 */
+  function showContact(type){
+    const box = document.getElementById('contact-msg');
+    const txt = document.getElementById('contact-msg-text');
+    const ic  = document.getElementById('contact-msg-ic');
+    if(type === 'kakao'){
+      ic.innerHTML  = '<svg class="ic w-5 h-5"><use href="#i-chat"/></svg>';
+      txt.innerHTML = '<b>청년정책과 청년인턴 이훈</b>에게 <b>카카오톡</b>으로 문의해 주세요.';
+    } else {
+      ic.innerHTML  = '<svg class="ic w-5 h-5"><use href="#i-mail"/></svg>';
+      txt.innerHTML = '<b>청년정책과 청년인턴 이훈</b>에게 <b>내부메일</b>로 문의해 주세요.';
+    }
+    box.classList.remove('hidden');
+  }
+
+  /* ===== 스크롤 (요소로 이동 — 함수명은 충돌 없는 이름 사용) ===== */
+  function scrollToId(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  /* 초기화 */
+  renderGroups();
+  applyFilter();
+
+  /* 스크롤 등장 */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.1 });
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
